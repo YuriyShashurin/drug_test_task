@@ -153,3 +153,5 @@ cython_debug/
 
 
 /venv
+
+/app/.env/
