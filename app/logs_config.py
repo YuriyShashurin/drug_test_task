@@ -6,7 +6,7 @@ class LogConfig(BaseModel):
 
     LOGGER_NAME: str = "drug_test_task"
     LOG_FORMAT: str = "%(levelprefix)s | %(asctime)s | %(message)s"
-    LOG_LEVEL: str = "DEBUG"
+    LOG_LEVEL: str = "INFO"
 
     # Logging config
     version = 1
