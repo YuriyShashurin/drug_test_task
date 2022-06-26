@@ -1,5 +1,5 @@
 CREATE TABLE Profile(
-    id serial primary key,
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     login VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(150) NOT NULL,
     name VARCHAR(30) NOT NULL,

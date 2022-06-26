@@ -3,6 +3,7 @@ from app import logger
 
 from auth.models import Profile
 
+# Добавление нового пользователя в БД
 async def add_new_user(auth_data, db:Session):
     try:
         new_user = Profile(**auth_data.dict())
@@ -14,6 +15,7 @@ async def add_new_user(auth_data, db:Session):
     except Exception as e:
         return e
 
+# Аутентификация пользователя в системе (Log in)
 async def login_user(login_data, db):
     user = db.query(Profile).filter(Profile.login==login_data.login).first()
     user.is_authenticated = True
@@ -22,13 +24,14 @@ async def login_user(login_data, db):
     logger.info(f'The User @{login_data.login} logged in')
     return user
 
-
+# Выход пользователя из системы (Log out)
 async def logout_user(id: int, db: Session):
     user = db.query(Profile).get(id.id)
     user.is_authenticated = False
     db.commit()
     db.refresh(user)
     logger.info(f'The User {id} logged out')
+    return user
 
 
 # получение данных о пользователи по айди

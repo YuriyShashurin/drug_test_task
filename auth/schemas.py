@@ -1,15 +1,15 @@
-from pydantic import BaseModel,EmailStr
+from pydantic import BaseModel,EmailStr,UUID4
 from datetime import date
 from typing import Optional
 
-
+# Модель для принятия данных для логина
 class LoginUserBase(BaseModel):
     login: str
     password : str
 
     
 
-
+# Модель для принятия данных для логина
 class UserCreate(LoginUserBase):
     name: str
     birth: date
@@ -20,7 +20,7 @@ class UserCreate(LoginUserBase):
 
 
 class User(BaseModel):
-    id: int
+    id: UUID4
 
 
 class UserResponse(User):

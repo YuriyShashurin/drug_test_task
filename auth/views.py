@@ -75,25 +75,42 @@ async def login_user(login_data: schemas.LoginUserBase, db: Session = Depends(ge
 
 
 # Обработка запроса на выход
-@auth_router.post('/auth/logout/', status_code=201)
+@auth_router.post('/auth/logout/',response_model=schemas.UserResponse, status_code=201)
 async def logout_user(id: schemas.User, db: Session = Depends(get_postgres_db)):
-    await crud.logout_user(id, db)
+    result = await crud.logout_user(id, db)
+    return result
 
 
 # Обработка запрос на получение данных о пользователи по айди
 @auth_router.get('/user/', response_model=schemas.UserItem,status_code=200)
-async def get_user(id: int, db: Session = Depends(get_postgres_db)):
-    try:
-        user = await crud.get_user_by_id(id, db)
-        if user == None:
-            raise my_exceptions.UserNotFoundError(id)
-        else:
-            return user
+async def get_user(id, db: Session = Depends(get_postgres_db)):
+    check_access = await validation.check_authentication(id,db)
+    print (check_access)
+    if check_access:  
+        try:
+            user = await crud.get_user_by_id(id, db)
+            if user == None:
+                raise my_exceptions.UserNotFoundError(id)
+            else:
+                return user
 
-    except Exception as e:
-        e.get_error_text()
+        except my_exceptions.UserNotFoundError as e:
+            e.get_error_text()
+            detail = {
+                'status':e.__dict__['status'],
+                'message': e.__dict__['text'],
+            }
+            raise HTTPException(status_code=404, detail=detail)
+
+        except:
+            detail = {
+                'status': 500,
+                'message': 'ID введен не в правильном формате',
+            }
+            raise HTTPException(status_code=404, detail=detail)
+    else:
         detail = {
-            'status':e.__dict__['status'],
-            'message': e.__dict__['text'],
-        }
+            'status': 401,
+            'message': 'Неавторизованный пользователь. В доступе отказано',
+            }
         raise HTTPException(status_code=404, detail=detail)

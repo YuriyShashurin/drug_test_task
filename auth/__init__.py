@@ -1,1 +1,1 @@
-from auth import views, schemas, test, models, my_exceptions
+from auth import views, schemas, models, my_exceptions
