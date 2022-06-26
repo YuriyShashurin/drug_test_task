@@ -27,17 +27,23 @@ async def valid_user_email(email):
 
 
 async def valid_user_phone(phone):
-    pass
+    print(len(phone))
+    if phone.startswith('+7') and len(phone) == 12:
+        return True
+    else: 
+        return False
 
 
 async def valid_register_data(auth_data):
-    check_age = await valid_user_age(auth_data.birth)
-    check_email = await valid_user_email(auth_data.email)
-    check_phone = await valid_user_phone(auth_data.phone)
-    if check_email and check_age and check_phone:
-        return True
+
+    valid_result = {'birth': await valid_user_age(auth_data.birth), 
+                    'email': await valid_user_email(auth_data.email), 
+                    'phone': await valid_user_phone(auth_data.phone)}
+    if all(check == True for check in valid_result.values()):
+        valid_result['total_valid_result'] = True
     else:
-        return False
+        valid_result['total_valid_result'] = False
+    return valid_result
 
 
 async def hashed_password(plain_password):
