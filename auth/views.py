@@ -22,11 +22,13 @@ def get_postgres_db():
 # Обработка запроса на регистрацию пользователя
 @auth_router.post('/auth/register/', response_model=schemas.UserResponse,status_code=201)
 async def create_user(auth_data: schemas.UserCreate, db: Session = Depends(get_postgres_db)):
+    print(auth_data)
     valid_form = await validation.valid_register_data(auth_data)
     if valid_form['total_valid_result']:
         try:
             hashed_password = await validation.hashed_password(auth_data.password)
-            auth_data.password = hashed_password.decode()
+            auth_data.password = hashed_password
+
             new_user = await crud.add_new_user(auth_data, db)
             try:
                 if new_user.id:
@@ -54,7 +56,7 @@ async def create_user(auth_data: schemas.UserCreate, db: Session = Depends(get_p
             'status':422,
             'message': messages
         }
-        raise HTTPException(status_code=500,
+        raise HTTPException(status_code=422,
                             detail=detail,
                             headers={"Content-Type": "application/json"},)
 

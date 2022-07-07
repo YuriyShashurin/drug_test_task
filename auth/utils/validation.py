@@ -55,7 +55,7 @@ async def hashed_password(plain_password):
 async def check_login_user(login_data, db:Session):
     db_user = db.query(Profile).filter(Profile.login==login_data.login).first()
     if db_user:
-        return bcrypt.checkpw(login_data.password.encode(), db_user.password.encode())
+        return bcrypt.checkpw(login_data.password.encode(), db_user.password)
     else:
         return None
 

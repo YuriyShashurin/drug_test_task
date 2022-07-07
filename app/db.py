@@ -31,6 +31,7 @@ def create_tables(db_name):
                 cur.execute(f.read()) # Добавление таблиц
                 logger.info("Tables have been added")
         except psycopg2.ProgrammingError as e:
+            print(e)
             logger.info("Tables already exists")
 
     conn.commit()
