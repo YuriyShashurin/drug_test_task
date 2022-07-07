@@ -8,6 +8,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 
 def create_db(db_name):
+    print(settings.postgres_password)
     conn = psycopg2.connect(user=settings.postgres_name, password=settings.postgres_password, host=settings.postgres_host)
     conn.set_session(autocommit=True)
     conn.set_isolation_level(

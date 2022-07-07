@@ -39,10 +39,10 @@ async def create_user(auth_data: schemas.UserCreate, db: Session = Depends(get_p
         except Exception as e:
             logger.error(e)
             detail = {
-                'status':500,
-                'message': e.orig.args[0]
+                'status':400,
+                'message': 'Пользователь с введенным логином уже существует'
             }
-            raise HTTPException(status_code=500, detail=detail)
+            raise HTTPException(status_code=400, detail=detail)
 
     else:
         messages = []
@@ -106,13 +106,13 @@ async def get_user(id, db: Session = Depends(get_postgres_db)):
 
         except:
             detail = {
-                'status': 500,
+                'status': 400,
                 'message': 'ID введен не в правильном формате',
             }
-            raise HTTPException(status_code=404, detail=detail)
+            raise HTTPException(status_code=400, detail=detail)
     else:
         detail = {
             'status': 401,
             'message': 'Неавторизованный пользователь. В доступе отказано',
             }
-        raise HTTPException(status_code=404, detail=detail)
+        raise HTTPException(status_code=401, detail=detail)
