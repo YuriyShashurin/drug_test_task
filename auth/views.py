@@ -22,11 +22,10 @@ def get_postgres_db():
 # Обработка запроса на регистрацию пользователя
 @auth_router.post('/auth/register/', response_model=schemas.UserResponse,status_code=201)
 async def create_user(auth_data: schemas.UserCreate, db: Session = Depends(get_postgres_db)):
-    print(auth_data)
-    valid_form = await validation.valid_register_data(auth_data)
+    valid_form = validation.valid_register_data(auth_data)
     if valid_form['total_valid_result']:
         try:
-            hashed_password = await validation.hashed_password(auth_data.password)
+            hashed_password = validation.hashed_password(auth_data.password)
             auth_data.password = hashed_password
 
             new_user = await crud.add_new_user(auth_data, db)
@@ -64,7 +63,7 @@ async def create_user(auth_data: schemas.UserCreate, db: Session = Depends(get_p
 # Обработка входа пользователя с логином и паролем
 @auth_router.post('/auth/login/', response_model=schemas.UserResponse,status_code=201)
 async def login_user(login_data: schemas.LoginUserBase, db: Session = Depends(get_postgres_db)):
-    check_login_data = await validation.check_login_user(login_data, db) #Проверка логина и пароля
+    check_login_data = validation.check_login_user(login_data, db) #Проверка логина и пароля
     if check_login_data: #Обработка, если логин и пароль совпадают с БД
         db_user = await crud.login_user(login_data, db) #Аутентификация пользователя
         return db_user
@@ -86,7 +85,7 @@ async def logout_user(id: schemas.User, db: Session = Depends(get_postgres_db)):
 # Обработка запрос на получение данных о пользователи по айди
 @auth_router.get('/user/', response_model=schemas.UserItem,status_code=200)
 async def get_user(id, db: Session = Depends(get_postgres_db)):
-    check_access = await validation.check_authentication(id,db)
+    check_access = validation.check_authentication(id,db)
     print (check_access)
     if check_access:  
         try:
